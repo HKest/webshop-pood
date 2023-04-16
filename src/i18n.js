@@ -1,62 +1,23 @@
 import i18n from "i18next";
+import enFail from "./i18n/en.json";
+import eeFail from "./i18n/ee.json";
+import ruFail from "./i18n/ru.json";
+import deFail from "./i18n/de.json";
 import { initReactI18next } from "react-i18next";
 
 const resources = {
   en: {
-    translation: {
-      admin: "admin",
-      contact: "contact",
-      shops: "shops",
-      cart: "cart",
-      "maintain-categories": "Maintain categories",
-      "maintain-shops": "Maintain shops",
-      "add-products": "AddProducts",
-      "maintain-products": "Maintain products",
-      "edit-products": "Edit products",
-      Cart: "Cart",
-    },
+    translation: enFail,
   },
+
   ee: {
-    translation: {
-      admin: "admin",
-      contact: "Kontaktid",
-      shops: "Poed",
-      cart: "Ostukorv",
-      "maintain-categories": "Halda kategooriaid",
-      "maintain-shops": "Halda poode",
-      "add-products": "Lisa toode",
-      "maintain-products": "Halda tooteid",
-      "edit-products": "Muuda tooteid",
-      Cart: "Ostukorv",
-    },
+    translation: eeFail,
   },
   ru: {
-    translation: {
-      admin: "admin",
-      contact: "Kontakti",
-      shops: "Magazin",
-      cart: "Ostukorv",
-      "maintain-categories": "Halda kategooriaid",
-      "maintain-shops": "Halda poode",
-      "add-products": "Lisa toode",
-      "maintain-products": "Halda tooteid",
-      "edit-products": "Muuda tooteid",
-      Cart: "Ostukorv",
-    },
+    translation: ruFail,
   },
   de: {
-    translation: {
-      admin: "admin",
-      contact: "Kontakte",
-      shops: "Poed",
-      cart: "Ostukorv",
-      "maintain-categories": "Halda kategooriaid",
-      "maintain-shops": "Halda poode",
-      "add-products": "Lisa toode",
-      "maintain-products": "Halda tooteid",
-      "edit-products": "Muuda tooteid",
-      Cart: "Ostukorv",
-    },
+    translation: deFail,
   },
 };
 

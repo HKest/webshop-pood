@@ -1,75 +1,84 @@
-import React from 'react'
-import { useState } from 'react'
-import cartData from '../../data/cart.json'
+import React, { useState } from 'react'
+// import cartFromFile from "../../data/cart.json";
 import { Link } from 'react-router-dom';
-import SingleProduct from './SingleProduct';
+import "../../css/Cart.css";
+import Button from '@mui/material/Button';
+
+// SALVESTUSE VARIANDID:
+// 1. Andmebaas - Amazon, Microsoft, Oracle
+      // - seda näevad kõik. Tooted. Kategooriad. Poed.
+// 2. LocalStorage - Brauseris
+      // - seda näen vaid mina. Ostukorv.
 
 function Cart() {
-
-
-
-  const [cart, setCart] = useState(cartData);
+  const [cart, setCart] = useState(JSON.parse(localStorage.getItem("cart")) || []);
 
   const emptyCart = () => {
-    setCart([]);
+    setCart([]); // uuendab HTMLi
+    localStorage.setItem("cart", JSON.stringify([])); // see uuendab localStorage-t
   };
-  
-  const addItem = (clickedItem) => {
-    cart.push(clickedItem);
-    setCart(cart.slice())
-  };
-  
-  
 
-  const delateItem = (jarjekorranumber) => {
-    cart.splice(jarjekorranumber, 1);
+  const decreaseQuantity = (index) => {
+    if (cart[index].quantity === 1) {
+      return;
+    }
+    cart[index].quantity = cart[index].quantity - 1;
     setCart(cart.slice());
-  };
-  
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }
+
+  const increaseQuantity = (index) => {
+    cart[index].quantity = cart[index].quantity + 1;
+    setCart(cart.slice());
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }
+
+  const removeFromCart = (index) => {
+    cart.splice(index, 1);
+    setCart(cart.slice());
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }
+
   const totalSum = () => {
-    let summa = 0;
-    cart.forEach((cart) => (summa = summa + cart.price));
-
-    return summa;
+    let sum = 0;
+    cart.forEach(element => sum = sum + element.product.price * element.quantity);
+    return sum.toFixed(2);
   };
-
-
-// ostukorvi fail välja kuvada:
-// üles usestate
-// htmals .map()
-
-// ostukorv kustuta, tühjenda, kogusumma, dünaamika kui on 0 kogus ei näidata ja kogusummat
 
   return (
     <div>
-{cart.length > 0 &&<button onClick={emptyCart}>Empty all</button>}
-{cart.length > 0 &&<div>Items in Cart: {cart.length}</div>}
-
-{cart.map((cart, jrkNR ) =>
-<div key={jrkNR}>
-
-        {cart.name} <br />
-        <img className='image' src={cart.image} alt="" /> <br />
-        {cart.id} <br />
-        {cart.price} <br />
-        {cart.category} <br />
-        {cart.description} <br />
-        {cart.active} <br />
-
+      {cart.length > 0 && 
+        <div className="cart-top">
+          <Button variant="outlined" onClick={emptyCart}>Empty all</Button>
+          <div>Products in cart: {cart.length}</div>
+        </div>
+      }
+      {/* {cart.length > 0 && } */}
+      {cart.map((element, index) => 
+        <div className="product" key={index}>
+            <img className="image" src={element.product.image} alt="" />
+            <div className="name">{element.product.name}</div>
+            <div className="price">{element.product.price.toFixed(2)}</div>
+            <div className="quantity">
+              <img src="/minus.png" className={element.quantity === 1 ? "disabled" : "button"} onClick={() => decreaseQuantity(index)} alt="" />
+              <div>{element.quantity}</div>
+              <img src="/pluss.png" className="button" onClick={() => increaseQuantity(index)} alt="" />
+            </div>
+            <div className="total">{(element.product.price * element.quantity).toFixed(2)}</div>
+            <img src="/remove.png" className="button" onClick={() => removeFromCart(index)} alt="" />
+        </div>
+        )}
+      {cart.length > 0 && 
+        <div className="cart-bottom">
+          Total: {totalSum()} €
+        </div>
+      }
       
-
-  
-
-<button onClick={() => addItem(cart)}>+</button>
-<button onClick={() => delateItem(jrkNR)}>x</button>
-<button onClick={SingleProduct}>View more</button>
-
-</div>
-)}
-
-{cart.length === 0 && <div>Basket is empty. <Link to="/">Go shopping</Link></div>}
-
-{cart.length > 0 && <div>Total: {totalSum()} $</div>}
+      {cart.length === 0 && 
+        <div className="center">
+          <br />
+          Basket is empty. <Link to="/">Go shopping</Link>
+        </div>}
     </div>
   )
 }

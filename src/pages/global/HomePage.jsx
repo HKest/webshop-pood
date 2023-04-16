@@ -1,23 +1,13 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import productsFromFile from "../../data/products.json";
-import CartfromFile from '../../data/cart.json';
-
+// import cartFromFile from "../../data/cart.json";
+import { Link } from 'react-router-dom';
+import Button from '@mui/material/Button';
+import { ToastContainer, toast } from 'react-toastify';
 
 function HomePage() {
-
   const [products, setProducts] = useState(productsFromFile);
 
-//   const addToCart = (klickedItem) => {
-// productsFromFile.push(klickedItem)
-//   }
-
-const addToCart = (clickedItem) => {
-  CartfromFile.push(clickedItem)
-
-}
-
-   
   const sortAZ = () => {
     products.sort((a,b) => a.name.localeCompare(b.name));
     setProducts(products.slice());
@@ -28,72 +18,68 @@ const addToCart = (clickedItem) => {
     setProducts(products.slice());
   }
 
-  const priceAce = () => {
+  const sortPriceAsc = () => {
     products.sort((a, b) => a.price - b.price);
     setProducts(products.slice());
   };
 
-  const PriceDesc = () => {
+  const sortPriceDesc = () => {
     products.sort((a, b) => b.price - a.price);
     setProducts(products.slice());
   };
-  
-  // sortZA
-  // sort PriceACe
-  // sort priceDesc
+
+  const addToCart = (clickedProduct) => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    const index = cart.findIndex(element => element.product.id === clickedProduct.id);
+
+
+    if (index >= 0) {
+
+      cart[index].quantity = cart[index].quantity +1;
+
+            // siis kui ostukorvis on juba see toode
+    } else {
+         // siis kui korvis pole seda toodet
+         cart.push({"product":  clickedProduct, "quantity": 1});
+    }
+   
+    localStorage.setItem("cart", JSON.stringify(cart));
+    // cartFromFile.push(clickedProduct);
+    // LISAGE TOAST, SISUGA: "Successfully added to cart"
+
+    // const filterProductsByCategory = (categoryClicked) => {
+
+    // }
+    toast.success("Successfully added to cart!")
+  }
 
   return (
     <div>
+      <Button onClick={sortAZ}>Sort AZ</Button>
+      <Button onClick={sortZA}>Sort ZA</Button>
+      <Button onClick={sortPriceAsc}>Lower price first</Button>
+      <Button onClick={sortPriceDesc}>Higer price first</Button>
 
-
-
-      <button onClick={sortAZ}>Sort AZ</button>
-
-      <button onClick={sortZA}>Sort ZA</button>
-
-      <button onClick={priceAce}>Lower price first</button>
-
-      <button onClick={PriceDesc}> Higer price first</button>
-
-      <div>Total products: {productsFromFile.length} tk</div>
-
-      {products.map((el, ix) => (
-
-      
-      <div key={ix}>
-        <Link to ={'/cart/' + ix}>
-        {el.id} <br />
-        {el.name} <br />
-        <img className='image' src={el.image} alt="" /> <br />
-     
-        {el.price} <br />
-        {el.category} <br /> 
-        {el.description} <br />
-        {el.active} <br />
-
-        </Link>
-
-
-          {/* <img src={product.image} alt="" />
-          <div>{product.id}</div>
-          <div>{product.name}</div>
-          <div>{product.price}</div>
-          <div>{product.image}</div>
-          <div>{product.category}</div>
-          <div>{product.description}</div>
-          <div>{product.active}</div> */}
-        
-          <button onClick={() => addToCart(el)}>Add product</button>
-
+      <div>{products.length} tk</div>
+      {products.map(product => 
+        <div key={product.id}>
+          <Link to={"/product/" + product.id}>
+            <img src={product.image} alt="" />
+            <div>{product.name}</div>
+            <div>{product.price.toFixed(2)}</div>
+          </Link>
+          <Button variant='contained' onClick={() => addToCart(product)}>Lisa ostukorvi</Button>
           <br />
           <br />
-
-        </div>         
-      ))}
-
-  
+        </div>
+       
+        )}
+        <ToastContainer
+        position='bottom-right'
+        theme='dark'
+        />
     </div>
-     
   )
 }
 
